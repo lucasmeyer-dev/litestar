@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+import sys
 from collections.abc import AsyncGenerator, Callable
 from contextlib import asynccontextmanager
 from dataclasses import fields
@@ -448,3 +449,12 @@ def test_handler_registration_on_registration_called_only_once(mocker: MockerFix
         )
         == 1
     )
+
+
+def test_litestar_init_without_optional_pydantic(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Ensure Litestar initializes gracefully without raising ModuleNotFoundError when pydantic is absent (#5142)
+    monkeypatch.setitem(sys.modules, "pydantic", None)
+    monkeypatch.setitem(sys.modules, "pydantic_core", None)
+
+    app = Litestar(route_handlers=[], openapi_config=None)
+    assert app is not None

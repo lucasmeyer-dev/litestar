@@ -8,8 +8,13 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Annotated, Any, Literal, NotRequired, get_type_hints
 
-import pydantic
-from pydantic_core import PydanticUndefined
+from litestar.exceptions import MissingDependencyException
+
+try:
+    import pydantic
+    from pydantic_core import PydanticUndefined
+except ImportError as e:
+    raise MissingDependencyException("pydantic") from e
 
 from litestar.openapi.spec import Example
 from litestar.params import KwargDefinition

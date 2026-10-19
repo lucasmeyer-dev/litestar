@@ -13,6 +13,13 @@ from litestar.dto.base_dto import AbstractDTO
 from litestar.dto.data_structures import DTOFieldDefinition
 from litestar.dto.field import DTO_FIELD_META_KEY, extract_dto_field
 from litestar.exceptions import MissingDependencyException, ValidationException
+
+try:
+    import pydantic
+    from pydantic import ValidationError
+except ImportError as e:
+    raise MissingDependencyException("pydantic") from e
+
 from litestar.plugins.pydantic.utils import get_model_info, is_pydantic_2_model, is_pydantic_undefined
 from litestar.types.empty import Empty
 from litestar.typing import FieldDefinition
@@ -21,15 +28,6 @@ if TYPE_CHECKING:
     from collections.abc import Collection, Generator
 
     from litestar.dto import DTOConfig
-
-try:
-    import pydantic as _  # noqa: F401
-except ImportError as e:
-    raise MissingDependencyException("pydantic") from e
-
-
-import pydantic
-from pydantic import ValidationError
 
 ModelType: TypeAlias = pydantic.BaseModel
 
